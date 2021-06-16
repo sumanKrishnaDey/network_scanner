@@ -17,5 +17,3 @@ def scan(ip):
 
 
 scan('10.0.2.1/24')
-
-# That is nice to work in vsCode
