@@ -1,0 +1,12 @@
+//To install vscode//////////////////
+1. install snapd
+sudo apt install snapd
+2. enable in
+PATH=$PATH:/snap/bin 
+3. install vscode
+snap install vscode --classic
+
+####### Scapy import fix for python 2.7
+sudo mkdir /usr/lib/python2.7/dist-packages/scapy
+cd /usr/lib/python3/dist-packages/
+cp -avr scapy/* /usr/lib/python2.7/dist-packages/scapy
